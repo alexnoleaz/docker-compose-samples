@@ -1,0 +1,51 @@
+# WARNING:
+# This configuration is optimized for development environments.
+# In a production environment, consider:
+# - Using specific image versions rather than 'latest'.
+# - Changing the restart policy to 'on-failure' or a more controlled setting.
+# - Using Docker Secrets or another secure method to handle sensitive data (e.g., strong passwords).
+# - Adjusting the volumes and networks to be more robust and secure.
+
+# Docker services configuration.
+services:
+  mongodb:
+    # Container name (uses CONTAINER_NAME from .env, defaults to 'mongodb')
+    container_name: ${CONTAINER_NAME:-mongodb}
+
+    # Restart policy for the container (uses RESTART_POLICY from .env, defaults to 'always')
+    restart: ${RESTART_POLICY:-always}
+
+    # https://hub.docker.com/_/mongo
+    # MongoDB image tag (uses IMAGE_TAG from .env, defaults to 'latest')
+    image: mongo:${IMAGE_TAG:-latest}
+
+    environment:
+      # MongoDB root username (uses DB_ROOT_USERNAME from .env, defaults to 'root')
+      MONGO_INITDB_ROOT_USERNAME: ${DB_ROOT_USERNAME:-root}
+
+      # MongoDB root password (uses DB_ROOT_PASSWORD from .env, defaults to 'Example123@Secure!')
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-Example123@Secure!}
+
+    ports:
+      # Port mapping for MongoDB (uses DB_PORT from .env, defaults to 27017)
+      - ${DB_PORT:-27017}:27017
+
+    volumes:
+      - mongodb_data:/data/db
+
+    networks:
+      - local
+
+# Docker volumes configuration.
+volumes:
+  mongodb_data:
+    # Volume name for MongoDB data (uses VOLUME_DATA_NAME from .env, defaults to 'mongodb_data')
+    name: ${VOLUME_DATA_NAME:-mongodb_data}
+    driver: local
+
+# Docker networks configuration.
+networks:
+  local:
+    # Network name (uses NETWORK_NAME from .env, defaults to 'local_dbs_network')
+    name: ${NETWORK_NAME:-local_dbs_network}
+    driver: bridge
