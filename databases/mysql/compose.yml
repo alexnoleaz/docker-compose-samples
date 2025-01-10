@@ -1,0 +1,48 @@
+# WARNING:
+# This configuration is optimized for development environments.
+# In a production environment, consider:
+# - Using specific image versions rather than 'latest'.
+# - Changing the restart policy to 'on-failure' or a more controlled setting.
+# - Using Docker Secrets or another secure method to handle sensitive data (e.g., strong passwords).
+# - Adjusting the volumes and networks to be more robust and secure.
+
+# Docker services configuration.
+services:
+  mysql:
+    # Container name (uses CONTAINER_NAME from .env, defaults to 'mysql')
+    container_name: ${CONTAINER_NAME:-mysql}
+
+    # Restart policy for the container (uses RESTART_POLICY from .env, defaults to 'always')
+    restart: ${RESTART_POLICY:-always}
+
+    # https://hub.docker.com/_/mysql
+    # MySQL image tag (uses IMAGE_TAG from .env, defaults to 'latest')
+    image: mysql:${IMAGE_TAG:-latest}
+
+    environment:
+      # MySQL root password (uses DB_ROOT_PASSWORD from .env, defaults to 'Example123@Secure!')
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-Example123@Secure!}
+
+    ports:
+      # Port mapping for MySQL (uses DB_PORT from .env, defaults to 3306)
+      - ${DB_PORT:-3306}:3306
+
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+    networks:
+      - local
+
+# Docker volumes configuration.
+volumes:
+  mysql_data:
+    # Volume name for MySQL data (uses VOLUME_DATA_NAME from .env, defaults to 'mysql_data')
+    name: ${VOLUME_DATA_NAME:-mysql_data}
+    driver: local
+
+# Docker networks configuration.
+networks:
+  local:
+    # Network name (uses NETWORK_NAME from .env, defaults to 'local_dbs_network')
+    name: ${NETWORK_NAME:-local_dbs_network}
+    driver: bridge
