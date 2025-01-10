@@ -1,0 +1,48 @@
+# WARNING:
+# This configuration is optimized for development environments.
+# In a production environment, consider:
+# - Using specific image versions rather than 'latest'.
+# - Changing the restart policy to 'on-failure' or a more controlled setting.
+# - Using Docker Secrets or another secure method to handle sensitive data (e.g., strong passwords).
+# - Adjusting the volumes and networks to be more robust and secure.
+
+# Docker services configuration.
+services:
+  pgsql:
+    # Container name (uses CONTAINER_NAME from .env, defaults to 'pgsql')
+    container_name: ${CONTAINER_NAME:-pgsql}
+
+    # Restart policy for the container (uses RESTART_POLICY from .env, defaults to 'always')
+    restart: ${RESTART_POLICY:-always}
+
+    # https://hub.docker.com/_/postgres
+    # PostgreSQL image tag (uses IMAGE_TAG from .env, defaults to 'latest')
+    image: postgres:${IMAGE_TAG:-latest}
+
+    environment:
+      # PostgreSQL postgres password (uses DB_POSTGRES_PASSWORD from .env, defaults to 'Example123@Secure!')
+      POSTGRES_PASSWORD: ${DB_POSTGRES_PASSWORD:-Example123@Secure!}
+
+    ports:
+      # Port mapping for PostgreSQL (uses DB_PORT from .env, defaults to 5432)
+      - ${DB_PORT:-5432}:5432
+
+    volumes:
+      - pgsql_data:/var/lib/postgresql/data
+
+    networks:
+      - local
+
+# Docker volumes configuration.
+volumes:
+  pgsql_data:
+    # Volume name for PostgreSQL data (uses VOLUME_DATA_NAME from .env, defaults to 'pgsql_data')
+    name: ${VOLUME_DATA_NAME:-pgsql_data}
+    driver: local
+
+# Docker networks configuration.
+networks:
+  local:
+    # Network name (uses NETWORK_NAME from .env, defaults to 'local_dbs_network')
+    name: ${NETWORK_NAME:-local_dbs_network}
+    driver: bridge
