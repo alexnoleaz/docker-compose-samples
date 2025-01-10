@@ -1,0 +1,11 @@
+# Environment Variables
+.env
+
+# macOS
+.DS_Store
+
+# IDEs and Editors
+.idea
+.vscode
+*.sublime-project
+*.sublime-workspace
