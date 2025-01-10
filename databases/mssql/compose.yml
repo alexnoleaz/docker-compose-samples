@@ -1,0 +1,53 @@
+# WARNING:
+# This configuration is optimized for development environments.
+# In a production environment, consider:
+# - Using specific image versions rather than 'latest'.
+# - Changing the restart policy to 'on-failure' or a more controlled setting.
+# - Using Docker Secrets or another secure method to handle sensitive data (e.g., strong passwords).
+# - Adjusting the volumes and networks to be more robust and secure.
+
+# Docker services configuration.
+services:
+  mssql:
+    # Container name (uses CONTAINER_NAME from .env, defaults to 'mssql')
+    container_name: ${CONTAINER_NAME:-mssql}
+
+    # Restart policy for the container (uses RESTART_POLICY from .env, defaults to 'always')
+    restart: ${RESTART_POLICY:-always}
+
+    # https://hub.docker.com/r/microsoft/mssql-server
+    # Microsoft SQL Server image tag (uses IMAGE_TAG from .env, defaults to 'latest')
+    image: mcr.microsoft.com/mssql/server:${IMAGE_TAG:-latest}
+
+    environment:
+      # Microsoft SQL Server sa password (uses DB_SA_PASSWORD from .env, defaults to 'Example123@Secure!')
+      MSSQL_SA_PASSWORD: ${DB_SA_PASSWORD:-Example123@Secure!}
+
+      # Microsoft SQL Server product id (uses DB_PID from .env, defaults to 'Developer')
+      MSSQL_PID: ${DB_PID:-Developer}
+
+      ACCEPT_EULA: Y
+
+    ports:
+      # Port mapping for Microsoft SQL Server (uses DB_PORT from .env, defaults to 1433)
+      - ${DB_PORT:-1433}:1433
+
+    volumes:
+      - mssql_data:/var/opt/mssql
+
+    networks:
+      - local
+
+# Docker volumes configuration.
+volumes:
+  mssql_data:
+    # Volume name for Microsoft SQL Server data (uses VOLUME_DATA_NAME from .env, defaults to 'mssql_data')
+    name: ${VOLUME_DATA_NAME:-mssql_data}
+    driver: local
+
+# Docker networks configuration.
+networks:
+  local:
+    # Network name (uses NETWORK_NAME from .env, defaults to 'local_dbs_network')
+    name: ${NETWORK_NAME:-local_dbs_network}
+    driver: bridge
